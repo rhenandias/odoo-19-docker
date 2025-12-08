@@ -1,0 +1,51 @@
+# ===========================================
+# Arquivos de Ambiente
+# ===========================================
+.env
+
+# ===========================================
+# Dados dos Containers (volumes locais)
+# O Docker cria essas pastas automaticamente
+# ===========================================
+data/
+
+# ===========================================
+# Addons Nativos do Odoo (extraídos do container)
+# Usados apenas para consulta/referência local
+# ===========================================
+native-addons/
+
+# ===========================================
+# Sistema Operacional
+# ===========================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ===========================================
+# IDEs e Editores
+# ===========================================
+.idea/
+.vscode/
+*.code-workspace
+
+# ===========================================
+# Python (caso adicione scripts locais)
+# ===========================================
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# ===========================================
+# Logs
+# ===========================================
+*.log
+logs/
