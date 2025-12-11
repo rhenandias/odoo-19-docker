@@ -9,27 +9,31 @@ if [ -d "/var/lib/odoo" ]; then
 fi
 
 # ===========================================
-# Extração dos Addons Nativos do Odoo
+# Extração do código fonte completo do Odoo
 # ===========================================
-# Copia os módulos nativos do Odoo para o diretório mapeado
-# para que possam ser consultados durante o desenvolvimento
-NATIVE_ADDONS_SRC="/usr/lib/python3/dist-packages/odoo/addons"
-NATIVE_ADDONS_DEST="/mnt/native-addons"
+# Copia todo o pacote do Odoo (não apenas os addons) para o diretório
+# mapeado, permitindo que IDEs/extensões enxerguem o projeto completo.
+ODOO_SOURCE_SRC="/usr/lib/python3/dist-packages/odoo"
+ODOO_SOURCE_DEST="/mnt/odoo"
 
-if [ -d "$NATIVE_ADDONS_DEST" ]; then
+if [ -d "$ODOO_SOURCE_DEST" ]; then
     # Verifica se o diretório está vazio (exceto arquivos ocultos)
-    if [ -z "$(ls -A $NATIVE_ADDONS_DEST 2>/dev/null)" ]; then
-        echo "Extracting native Odoo addons to $NATIVE_ADDONS_DEST..."
-        if [ -d "$NATIVE_ADDONS_SRC" ]; then
-            cp -r "$NATIVE_ADDONS_SRC"/* "$NATIVE_ADDONS_DEST/"
-            chown -R odoo:odoo "$NATIVE_ADDONS_DEST"
-            chmod -R 755 "$NATIVE_ADDONS_DEST"
-            echo "Native addons extracted successfully!"
+    if [ -z "$(ls -A "$ODOO_SOURCE_DEST" 2>/dev/null)" ]; then
+        echo "Extracting full Odoo source to $ODOO_SOURCE_DEST..."
+        if [ -d "$ODOO_SOURCE_SRC" ]; then
+            cp -r "$ODOO_SOURCE_SRC"/* "$ODOO_SOURCE_DEST/"
+            chown -R odoo:odoo "$ODOO_SOURCE_DEST"
+            chmod -R 755 "$ODOO_SOURCE_DEST"
+            echo "Full Odoo source extracted successfully!"
         else
-            echo "Warning: Native addons source directory not found at $NATIVE_ADDONS_SRC"
+            echo "Warning: Odoo source directory not found at $ODOO_SOURCE_SRC"
         fi
     else
-        echo "Native addons directory already populated, skipping extraction."
+        if [ -f "$ODOO_SOURCE_DEST/odoo-bin" ] || [ -f "$ODOO_SOURCE_DEST/__init__.py" ]; then
+            echo "Odoo source directory already populated, skipping extraction."
+        else
+            echo "Odoo source directory contains existing files. Remove them to re-extract the full source."
+        fi
     fi
 fi
 

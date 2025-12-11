@@ -12,7 +12,7 @@ odoo-19-docker /
 ├── config/
 │   └── odoo.conf         # Configuração do Odoo
 ├── addons/               # Módulos customizados
-├── native-addons/        # Módulos nativos do Odoo (somente leitura)
+├── odoo/                 # Cópia completa do código fonte do Odoo (somente leitura)
 └── data/
     ├── postgres/         # Dados do PostgreSQL
     └── odoo/             # Dados do Odoo (filestore)
@@ -24,13 +24,13 @@ odoo-19-docker /
 
 Todos os volumes estão mapeados localmente, permitindo fácil acesso e reset dos dados.
 
-| Container      | Caminho no Container              | Caminho Local     | Função                            |
-| -------------- | --------------------------------- | ----------------- | --------------------------------- |
-| **PostgreSQL** | `/var/lib/postgresql/data/pgdata` | `./data/postgres` | Dados do banco de dados           |
-| **Odoo**       | `/var/lib/odoo`                   | `./data/odoo`     | Filestore e sessions              |
-| **Odoo**       | `/etc/odoo`                       | `./config`        | Arquivo `odoo.conf`               |
-| **Odoo**       | `/mnt/extra-addons`               | `./addons`        | Módulos customizados              |
-| **Odoo**       | `/mnt/native-addons`              | `./native-addons` | Módulos nativos (somente leitura) |
+| Container      | Caminho no Container              | Caminho Local     | Função                                          |
+| -------------- | --------------------------------- | ----------------- | ----------------------------------------------- |
+| **PostgreSQL** | `/var/lib/postgresql/data/pgdata` | `./data/postgres` | Dados do banco de dados                         |
+| **Odoo**       | `/var/lib/odoo`                   | `./data/odoo`     | Filestore e sessions                            |
+| **Odoo**       | `/etc/odoo`                       | `./config`        | Arquivo `odoo.conf`                             |
+| **Odoo**       | `/mnt/extra-addons`               | `./addons`        | Módulos customizados                            |
+| **Odoo**       | `/mnt/odoo`                       | `./odoo`          | Código fonte completo do Odoo (somente leitura) |
 
 ---
 
@@ -128,6 +128,24 @@ docker compose restart
 
 ---
 
+## 🐘 Debug do PostgreSQL via `psql`
+
+Para inspecionar o banco dentro do container do Postgres, use:
+
+```bash
+docker exec -it odoo_postgres psql -h postgres -U odoo -d odoo-test
+```
+
+No prompt do `psql`:
+
+- `\dt` lista tabelas
+- `\d table_name;` mostra o esquema da tabela
+- `\q` sai
+
+Se você já estiver dentro do próprio container `odoo_postgres`, o `-h postgres` é opcional.
+
+---
+
 ## 📝 Notas Adicionais
 
 ### Admin Master Password
@@ -167,23 +185,23 @@ addons/
     └── ...
 ```
 
-### Consultar Módulos Nativos do Odoo
+### Consultar Código Fonte do Odoo
 
-O diretório `native-addons/` contém uma cópia dos módulos nativos do Odoo, extraídos automaticamente na primeira inicialização do container. Estes arquivos são **apenas para consulta e referência** durante o desenvolvimento.
+O diretório `odoo/` contém **todo o código fonte do Odoo** (não apenas os addons) extraído automaticamente na primeira inicialização do container. Ele é pensado para IDEs e extensões reconhecerem o projeto completo do Odoo localmente.
 
-> ⚠️ **IMPORTANTE**: Os arquivos em `native-addons/` são **somente leitura**. **NÃO edite esses arquivos diretamente!** Qualquer alteração será perdida e não terá efeito no Odoo. Use-os apenas como referência para entender a estrutura dos módulos nativos ao criar seus próprios módulos customizados.
+> ⚠️ **IMPORTANTE**: Os arquivos em `odoo/` são **somente leitura**. **NÃO edite esses arquivos diretamente!** Qualquer alteração será perdida e não terá efeito no Odoo. Use-os apenas como referência.
 
 **Casos de uso:**
 
-- Consultar campos e métodos de modelos nativos antes de herdá-los
+- Consultar campos, métodos e serviços do core do Odoo antes de herdá-los
 - Verificar views XML para estender templates
 - Analisar a estrutura de manifests (`__manifest__.py`)
-- Estudar implementações de referência
+- Permitir que extensões/IDEs detectem o projeto completo do Odoo para autocompletes
 
-**Para forçar uma nova extração** (ex: após atualizar a versão do Odoo):
+**Para forçar uma nova extração** (ex: após atualizar a imagem do Odoo ou migrar de apenas-addons para o código completo):
 
 ```bash
-rm -rf native-addons/*
+rm -rf odoo/*
 docker compose restart odoo
 ```
 

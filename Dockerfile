@@ -13,35 +13,6 @@ LABEL description="Odoo 19.0 customizado com dependências adicionais e correç�
 # ------------------------------------------
 USER root
 
-# Atualizar sistema e instalar dependências adicionais
-RUN apt-get update && apt-get install -y \
-  # Ferramentas de desenvolvimento
-  git \
-  vim \
-  curl \
-  wget \
-  # Bibliotecas Python úteis
-  python3-pip \
-  # Ferramentas de build (caso precise compilar módulos)
-  build-essential \
-  python3-dev \
-  libxml2-dev \
-  libxslt1-dev \
-  libldap2-dev \
-  libsasl2-dev \
-  libjpeg-dev \
-  libpng-dev \
-  libfreetype6-dev \
-  liblcms2-dev \
-  libwebp-dev \
-  libtiff5-dev \
-  # Fontes para relatórios PDF
-  fonts-liberation \
-  fonts-dejavu \
-  # Limpeza
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
 # ------------------------------------------
 # DEPENDÊNCIAS PYTHON (quando necessário)
 # ------------------------------------------

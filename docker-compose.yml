@@ -44,7 +44,7 @@ services:
       - ./data/odoo:/var/lib/odoo
       - ./config:/etc/odoo
       - ./addons:/mnt/extra-addons
-      - ./native-addons:/mnt/native-addons
+      - ./odoo:/mnt/odoo
     ports:
       - "${ODOO_PORT}:8069"
       - "${ODOO_LONGPOLLING_PORT}:8072"
